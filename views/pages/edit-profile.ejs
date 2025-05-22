@@ -1,0 +1,127 @@
+<%- include('../partials/head') %>
+<%- include('../partials/header', { user: user }) %>
+
+<main class="container my-5">
+  <div class="row justify-content-center">
+    <div class="col-lg-8">
+      <div class="card shadow-sm">
+        <div class="card-header bg-primary text-white">
+          <h2 class="mb-0"><i class="bi bi-pencil-square me-2"></i>Editar Perfil</h2>
+        </div>
+        
+        <div class="card-body">
+
+          <form action="/profile/edit" method="POST" enctype="multipart/form-data">
+
+            <input type="hidden" name="existingAvatar" value="<%= user.avatar %>">
+
+            <!-- imagen -->
+            <div class="mb-4 text-center">
+              <div class="avatar-upload">
+                <div class="avatar-preview mb-3">
+                  <img src="<%= user.avatar || '/images/default-avatar.jpg' %>" 
+                       class="rounded-circle shadow" 
+                       style="width: 150px; height: 150px; object-fit: cover;"
+                       id="avatarPreview">
+                </div>
+                <label class="btn btn-outline-primary">
+                  <i class="bi bi-camera-fill me-2"></i>Cambiar foto
+                  <input 
+                    type="file" 
+                    name="avatar" 
+                    id="avatarInput" 
+                    accept="image/*" 
+                    hidden
+                    onchange="previewAvatar(event)"
+                  >
+                </label>
+              </div>
+            </div>
+
+            <!-- nombre -->
+            <div class="mb-3">
+              <label for="username" class="form-label">Nombre de usuario</label>
+              <input 
+                type="text" 
+                class="form-control" 
+                id="username"
+                name="username" 
+                value="<%= user.username %>"
+                required
+              >
+            </div>
+            
+            <!-- email -->
+            <div class="mb-3">
+              <label for="email" class="form-label">Correo electrónico</label>
+              <input 
+                type="email" 
+                class="form-control" 
+                id="email"
+                name="email" 
+                value="<%= user.email %>"
+                required
+              >
+            </div>
+            
+            <!-- telefono -->
+            <div class="mb-3">
+              <label for="phone" class="form-label">Teléfono</label>
+              <input 
+                type="tel" 
+                class="form-control <%= (typeof error !== 'undefined' && error && error.toLowerCase().includes('teléfono')) ? 'is-invalid' : '' %>"
+                id="phone"
+                name="phone"
+                value="<%= user.phone %>"
+                pattern="[0-9]{9}"
+                title="9 dígitos sin espacios"
+                placeholder="Ej: 612345678"
+              >
+              <small class="text-muted">Formato: 9 dígitos sin espacios</small>
+            </div>
+            
+            <!-- descripcion -->
+            <div class="mb-3">
+              <label for="description" class="form-label">Descripción</label>
+              <textarea 
+                class="form-control" 
+                id="description"
+                name="description" 
+                rows="3"
+              ><%= user.description %></textarea>
+              <small class="text-muted">Cuéntanos algo sobre ti</small>
+            </div>
+            
+            <!-- botones-->
+            <div class="d-flex justify-content-between mt-4">
+              <a href="/profile" class="btn btn-outline-secondary">
+                <i class="bi bi-x-circle me-1"></i> Cancelar
+              </a>
+              <button type="submit" class="btn btn-primary">
+                <i class="bi bi-check-circle me-1"></i> Guardar cambios
+              </button>
+            </div>
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>
+</main>
+
+<script>
+  function previewAvatar(event) {
+    const reader = new FileReader();
+    const preview = document.getElementById('avatarPreview');
+    
+    reader.onload = function() {
+      preview.src = reader.result;
+      preview.classList.add('uploaded');
+    }
+    
+    if (event.target.files[0]) {
+      reader.readAsDataURL(event.target.files[0]);
+    }
+  }
+</script>
+
+<%- include('../partials/footer') %>

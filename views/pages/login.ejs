@@ -1,0 +1,92 @@
+<%- include('../partials/head') %>
+<%- include('../partials/header', { user: user }) %>
+
+<main class="flex-grow-1 d-flex align-items-center">
+  <div class="container py-4">
+    <div class="row justify-content-center">
+      <div class="col-lg-5 col-md-7">
+        <div class="card shadow-sm border-0">
+          <div class="card-body p-4">
+            <h2 class="card-title text-center mb-4">Iniciar Sesión</h2>
+
+            <% if (typeof error !== 'undefined' && error) { %>
+              <div class="alert alert-danger alert-dismissible fade show">
+                <%= error %>
+                <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+              </div>
+            <% } %>
+
+            <form action="/auth/login" method="POST" class="needs-validation" novalidate>
+              <div class="mb-3">
+                <label for="identifier" class="form-label">Correo o Usuario</label>
+                <input 
+                  type="text" 
+                  class="form-control <%= (typeof errors !== 'undefined' && errors.identifier) ? 'is-invalid' : '' %>" 
+                  id="identifier"
+                  name="identifier" 
+                  value="<%= identifier || '' %>"
+                >
+                <% if (typeof errors !== 'undefined' && errors.identifier) { %>
+                  <div class="invalid-feedback">
+                    <%= errors.identifier %>
+                  </div>
+                <% } %>
+              </div>
+
+              <div class="mb-4">
+                <label for="password" class="form-label">Contraseña</label>
+                <div class="input-group">
+                  <input 
+                    type="password" 
+                    class="form-control <%= (typeof errors !== 'undefined' && errors.password) ? 'is-invalid' : '' %>" 
+                    id="password"
+                    name="password"
+                  >
+                  <button 
+                    type="button" 
+                    class="btn btn-outline-primary"
+                    onclick="togglePassword('password')"
+                  >
+                    <i class="bi bi-eye-fill" id="eye-icon"></i>
+                  </button>
+                </div>
+                <% if (typeof errors !== 'undefined' && errors.password) { %>
+                  <div class="invalid-feedback">
+                    <%= errors.password %>
+                  </div>
+                <% } %>
+              </div>
+
+              <div class="d-grid mb-3">
+                <button type="submit" class="btn btn-primary btn-lg">
+                  <i class="bi bi-box-arrow-in-right me-2"></i>Ingresar
+                </button>
+              </div>
+
+              <div class="text-center">
+                <p class="mb-0">¿No tienes cuenta? <a href="/auth/register">Regístrate</a></p>
+              </div>
+            </form>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</main>
+
+<script>
+  document.addEventListener('DOMContentLoaded', () => {
+    const inputs = document.querySelectorAll('.form-control.is-invalid');
+    inputs.forEach(input => input.classList.remove('is-invalid'));
+  });
+
+  function togglePassword(fieldId) {
+    const field = document.getElementById(fieldId);
+    const icon = document.getElementById('eye-icon');
+    field.type = field.type === 'password' ? 'text' : 'password';
+    icon.classList.toggle('bi-eye-fill');
+    icon.classList.toggle('bi-eye-slash-fill');
+  }
+</script>
+
+<%- include('../partials/footer') %>

@@ -1,0 +1,47 @@
+<nav class="navbar navbar-expand-md navbar-dark bg-dark py-2">
+  <div class="container">
+    <a class="navbar-brand fw-bold" href="/">PetsFound</a>
+    
+    <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+      <span class="navbar-toggler-icon"></span>
+    </button>
+    
+    <div class="collapse navbar-collapse" id="navbarNav">
+      <ul class="navbar-nav ms-auto align-items-center">
+        <li class="nav-item">
+          <a class="nav-link" href="/posts">Posts</a>
+        </li>
+        
+        <% if (user) { %>
+          <!-- usuario logeado -->
+          <li class="nav-item">
+            <a class="nav-link d-flex align-items-center gap-2" href="/profile">
+              <% if (user.avatar) { %>
+                <img src="<%= user.avatar %>" 
+                     class="rounded-circle" 
+                     style="width: 32px; height: 32px; object-fit: cover;">
+              <% } else { %>
+                <div class="bg-primary text-white rounded-circle d-flex align-items-center justify-content-center" 
+                     style="width: 32px; height: 32px; font-size: 0.9rem;">
+                  <%= user.username.charAt(0).toUpperCase() %>
+                </div>
+              <% } %>
+              <span><%= user.username %></span>
+            </a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" href="/auth/logout">Cerrar Sesión</a>
+          </li>
+        <% } else { %>
+          <!-- menu usuarios no logeados -->
+          <li class="nav-item">
+            <a class="nav-link" href="/auth/login">Iniciar Sesión</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" href="/auth/register">Registrarse</a>
+          </li>
+        <% } %>
+      </ul>
+    </div>
+  </div>
+</nav> 

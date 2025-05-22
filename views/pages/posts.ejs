@@ -1,0 +1,139 @@
+<%- include('../partials/head') %>
+<%- include('../partials/header', { user: user }) %>
+
+<main class="container my-5">
+  <!-- buscador -->
+  <div class="row mb-4">
+  <div class="col-md-8 mx-auto">
+    <form action="/posts" method="GET" class="search-form">
+      <div class="input-group shadow-sm mb-3">
+        <input type="text" class="form-control form-control-lg border-primary" name="search" placeholder="Buscar por nombre..." value="<%= searchQuery || '' %>">
+        <select class="form-select form-control-lg border-primary" name="type" style="max-width: 150px;">
+          <option value="">Tipo</option>
+          <option value="perro" <%= selectedType === 'perro' ? 'selected' : '' %>>Perros</option>
+          <option value="gato" <%= selectedType === 'gato' ? 'selected' : '' %>>Gatos</option>
+          <option value="hamster" <%= selectedType === 'hamster' ? 'selected' : '' %>>Hamsters</option>
+          <option value="pájaro" <%= selectedType === 'pájaro' ? 'selected' : '' %>>Aves</option>
+          <option value="otro" <%= selectedType === 'otro' ? 'selected' : '' %>>Otros</option>
+        </select>
+        <select class="form-select form-control-lg border-primary" name="status" style="max-width: 160px;">
+          <option value="">Estado</option>
+          <option value="perdido" <%= selectedStatus === 'perdido' ? 'selected' : '' %>>Perdido</option>
+          <option value="encontrado" <%= selectedStatus === 'encontrado' ? 'selected' : '' %>>Encontrado</option>
+        </select>
+        <button class="btn btn-primary btn-lg" type="submit">
+          <i class="bi bi-search me-1"></i> Buscar
+        </button>
+      </div>
+    </form>
+  </div>
+</div>
+
+  <!-- titulo -->
+  <div class="d-flex justify-content-between align-items-center mb-4">
+    <h1 class="h2 mb-0">Mascotas Perdidas</h1>
+    <% if (user) { %>
+      <a href="/posts/create" class="btn btn-success">
+        <i class="bi bi-plus-circle me-1"></i> Nuevo Post
+      </a>
+    <% } %>
+  </div>
+
+  <!-- mensaje para resultados 0 -->
+  <% if (posts.length === 0) { %>
+    <div class="alert alert-info text-center py-4">
+      <i class="bi bi-info-circle-fill me-2"></i>
+      <%= searchQuery ? 'No se encontraron resultados para tu búsqueda' : 'No hay mascotas reportadas aún' %>
+    </div>
+  <% } %>
+
+  <!-- frid de posts -->
+  <div class="row row-cols-1 row-cols-md-2 row-cols-lg-3 g-4">
+    <% posts.forEach(post => { %>
+      <div class="col">
+        <div class="card h-100 shadow-sm border-0">
+          <!-- imagen principal -->
+          <% if (post.images && post.images.length > 0) { %>
+            <div class="card-img-top-container">
+              <img src="<%= post.images[0] %>" class="card-img-top" alt="<%= post.petName %>" loading="lazy">
+              <% if (post.reward > 0) { %>
+                <span class="badge bg-success position-absolute top-0 end-0 m-2">
+                  <i class="bi bi-coin me-1"></i> Recompensa
+                </span>
+              <% } %>
+            </div>
+          <% } %>
+
+          <!-- contenido -->
+          <div class="card-body d-flex flex-column">
+            <div class="d-flex justify-content-between align-items-start mb-2">
+              <h5 class="card-title mb-0"><%= post.petName %></h5>
+              <div>
+                <span class="badge bg-<%= post.status === 'encontrado' ? 'success' : 'danger' %>">
+                  <i class="bi <%= post.status === 'encontrado' ? 'bi' : 'bi'  %>"></i>
+                  <%= (post.status || 'perdido').toUpperCase() %> <!-- ← Protección contra undefined -->
+                </span>
+                <span class="badge bg-primary">
+                  <%= post.petType.charAt(0).toUpperCase() + post.petType.slice(1) %>
+                </span>
+              </div>
+            </div>
+            
+            <p class="card-text text-muted mb-3">
+              <%= post.description.substring(0, 120) %>
+              <%= post.description.length > 120 ? '...' : '' %>
+            </p>
+            
+            <div class="mt-auto">
+              <div class="d-flex justify-content-between align-items-center">
+                <a href="/posts/<%= post._id %>" class="btn btn-outline-primary btn-sm">
+                  <i class="bi bi-eye-fill me-1"></i> Ver detalles
+                </a>
+                <small class="text-muted">
+                  <%= post.lostDate.toLocaleDateString('es-ES', { day: 'numeric', month: 'short', year: 'numeric' }) %>
+                </small>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    <% }); %>
+  </div>
+
+  <!-- paginacion -->
+  <% if (totalPages > 1) { %>
+  <nav class="mt-5">
+    <ul class="pagination justify-content-center">
+      <!-- Botón Anterior -->
+      <li class="page-item <%= currentPage === 1 ? 'disabled' : '' %>">
+        <a class="page-link" 
+          href="/posts?page=<%= currentPage - 1 %><%= searchQuery ? `&search=${searchQuery}` : '' %><%= selectedType ? `&type=${selectedType}` : '' %><%= selectedStatus ? `&status=${selectedStatus}` : '' %>" 
+          aria-label="Anterior">
+          <span aria-hidden="true">&laquo;</span>
+        </a>
+      </li>
+
+      <!-- Números de página -->
+      <% for (let i = 1; i <= totalPages; i++) { %>
+        <li class="page-item <%= currentPage === i ? 'active' : '' %>">
+          <a class="page-link" 
+            href="/posts?page=<%= i %><%= searchQuery ? `&search=${searchQuery}` : '' %><%= selectedType ? `&type=${selectedType}` : '' %><%= selectedStatus ? `&status=${selectedStatus}` : '' %>">
+            <%= i %>
+          </a>
+        </li>
+      <% } %>
+
+      <!-- Botón Siguiente -->
+      <li class="page-item <%= currentPage === totalPages ? 'disabled' : '' %>">
+        <a class="page-link" 
+          href="/posts?page=<%= currentPage + 1 %><%= searchQuery ? `&search=${searchQuery}` : '' %><%= selectedType ? `&type=${selectedType}` : '' %><%= selectedStatus ? `&status=${selectedStatus}` : '' %>" 
+          aria-label="Siguiente">
+          <span aria-hidden="true">&raquo;</span>
+        </a>
+      </li>
+    </ul>
+  </nav>
+  <% } %>
+</main>
+
+<%- include('../partials/footer') %>

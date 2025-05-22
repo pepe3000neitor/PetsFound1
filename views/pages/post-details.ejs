@@ -1,0 +1,243 @@
+<%- include('../partials/head') %>
+<%- include('../partials/header', { user: user }) %>
+
+<div class="container my-4" style="margin-bottom: 100px; padding-top: 50px;">
+  <div class="card border-0 shadow-lg">
+    <div class="row g-0">
+      <!-- Sección de Imágenes -->
+      <div class="col-lg-5">
+        <div class="position-relative">
+          <div id="postCarousel" class="carousel slide" style="max-height: 400px;">
+            <div class="carousel-inner bg-light rounded-start">
+              <% post.images.forEach((img, index) => { %>
+                <div class="carousel-item <%= index === 0 ? 'active' : '' %>">
+                  <img src="<%= img %>" 
+                       class="d-block w-100 h-100 object-fit-contain" 
+                       style="min-height: 300px;"
+                       alt="<%= post.petName %>">
+                </div>
+              <% }); %>
+            </div>
+            <button class="carousel-control-prev" type="button" data-bs-target="#postCarousel" data-bs-slide="prev">
+              <span class="carousel-control-prev-icon bg-dark rounded-circle p-2" aria-hidden="true"></span>
+              <span class="visually-hidden">Previous</span>
+            </button>
+            <button class="carousel-control-next" type="button" data-bs-target="#postCarousel" data-bs-slide="next">
+              <span class="carousel-control-next-icon bg-dark rounded-circle p-2" aria-hidden="true"></span>
+              <span class="visually-hidden">Next</span>
+            </button>
+          </div>
+          <div class="position-absolute top-0 end-0 m-2">
+            <% if (post.reward > 0) { %>
+              <span class="badge bg-success fs-6">
+                <i class="bi bi-coin"></i> <%= post.reward.toFixed(2) %>€
+              </span>
+            <% } %>
+          </div>
+        </div>
+      </div>
+
+      <!-- Sección de Detalles -->
+      <div class="col-lg-7">
+        <div class="card-body p-4">
+          <!-- Header -->
+          <div class="d-flex justify-content-between align-items-start mb-3">
+            <div>
+              <h1 class="h2 mb-1"><%= post.petName %></h1>
+              <div class="d-flex gap-2 align-items-center">
+                <span class="badge bg-<%= post.status === 'encontrado' ? 'success' : 'danger' %>">
+                  <i class="bi <%= post.status === 'encontrado' ? 'bi' : 'bi' %>"></i>
+                  <%= post.status.toUpperCase() %>
+                </span>
+                <span class="badge bg-primary">
+                  <i class="bi bi-paw"></i>  <%= post.petType.charAt(0).toUpperCase() + post.petType.slice(1) %>
+                </span>
+                <small class="text-muted">
+                  <%= post.lostDate.toLocaleDateString('es-ES', { day: 'numeric', month: 'short', year: 'numeric' }) %>
+                </small>
+              </div>
+            </div>
+            <div class="d-flex align-items-center gap-2"> <!-- Cambio aquí -->
+              <a href="/posts/user/<%= post.owner._id %>" class="text-decoration-none d-flex align-items-center gap-2">
+                <% if (post.owner.avatar) { %>
+                  <img src="<%= post.owner.avatar %>" 
+                       class="rounded-circle" 
+                       style="width: 55px; height: 55px; object-fit: cover;">
+                <% } else { %>
+                  <div class="bg-primary text-white rounded-circle d-flex align-items-center justify-content-center" 
+                       style="width: 55px; height: 55px;">
+                    <%= post.owner.username.charAt(0).toUpperCase() %>
+                  </div>
+                <% } %>
+                <span class="fw-small" style="font-size: 20px;"><%= post.owner.username %></span> <!-- Nombre añadido -->
+              </a>
+            </div>
+          </div>
+
+          <!-- Descripción -->
+          <div class="mb-4">
+            <div class="border-bottom pb-2 mb-3">
+              <h5 class="mb-0"><i class="bi bi-info-circle"></i> Descripción</h5>
+            </div>
+            <p class="text-muted mb-0" style="white-space: pre-line;"><%= post.description %></p>
+          </div>
+
+          <!-- Mapa -->
+          <div class="mb-4">
+            <div class="border-bottom pb-2 mb-3">
+              <h5 class="mb-0"><i class="bi bi-geo-alt"></i> Última ubicación</h5>
+            </div>
+            <div id="detailMap" style="height: 200px; border-radius: 8px;"></div>
+          </div>
+
+          <!-- Comentarios -->
+          <div class="border-top pt-4">
+            <div class="d-flex justify-content-between align-items-center mb-3">
+              <h5 class="mb-0"><i class="bi bi-chat-text"></i> Comentarios (<%= post.comments.length %>)</h5>
+              <small class="text-muted">Ordenados por recientes</small>
+            </div>
+
+            <% if (user) { %>
+              <form action="/posts/<%= post._id %>/comments" method="POST" class="mb-4">
+                <div class="input-group">
+                  <textarea class="form-control" 
+                            name="text" 
+                            rows="2" 
+                            placeholder="Escribe tu comentario..."
+                            style="resize: none"></textarea>
+                  <button class="btn btn-primary" type="submit">
+                    <i class="bi bi-send"></i>
+                  </button>
+                </div>
+              </form>
+            <% } else { %>
+              <div class="alert alert-info mb-4">
+                <a href="/auth/login" class="alert-link">Inicia sesión</a> para comentar
+              </div>
+            <% } %>
+
+            <div class="comment-list">
+              <% post.comments.forEach(comment => { %>
+                <div class="d-flex gap-3 mb-3">
+                  <a href="/user/<%= comment.user._id %>" class="text-decoration-none">
+                    <% if (comment.user.avatar) { %>
+                      <img src="<%= comment.user.avatar %>" 
+                           class="rounded-circle" 
+                           style="width: 35px; height: 35px; object-fit: cover;">
+                    <% } else { %>
+                      <div class="bg-primary text-white rounded-circle d-flex align-items-center justify-content-center" 
+                           style="width: 35px; height: 35px; font-size: 0.9rem;">
+                        <%= comment.user.username.charAt(0).toUpperCase() %>
+                      </div>
+                    <% } %>
+                  </a>
+                  <div class="flex-grow-1">
+                    <div class="d-flex align-items-center gap-2 mb-1">
+                      <strong><%= comment.user.username %></strong>
+                      <small class="text-muted">
+                        <%= comment.createdAt.toLocaleDateString('es-ES', { 
+                          day: 'numeric', 
+                          month: 'short', 
+                          year: 'numeric'
+                        }) %>
+                      </small>
+                    </div>
+                    <p class="text-muted mb-0"><%= comment.text %></p>
+                  </div>
+                </div>
+              <% }); %>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Modal para Imagen Completa -->
+<div class="modal fade" id="imageModal" tabindex="-1">
+  <div class="modal-dialog modal-fullscreen">
+    <div class="modal-content bg-dark">
+      <div class="modal-body d-flex align-items-center justify-content-center">
+        <img src="" class="img-fluid modal-image" id="fullSizeImage">
+      </div>
+      <button type="button" 
+              class="btn btn-light position-absolute top-0 end-0 m-3" 
+              data-bs-dismiss="modal">
+        <i class="bi bi-x-lg"></i>
+      </button>
+    </div>
+  </div>
+</div>
+
+<!-- Scripts para Mapa y Modal -->
+<script>
+  // Inicialización del Mapa
+  function initDetailMap() {
+    const SPAIN_BOUNDS = new google.maps.LatLngBounds(
+      new google.maps.LatLng(27.6, -18.3), 
+      new google.maps.LatLng(43.8, 4.5)    
+    );
+
+    const position = { 
+      lat: <%= post.location.coordinates[1] %>,
+      lng: <%= post.location.coordinates[0] %>
+    };
+
+    const markerIcon = {
+      url: "<%= post.status === 'encontrado' ? 'https://maps.google.com/mapfiles/ms/icons/green-dot.png' : 'https://maps.google.com/mapfiles/ms/icons/red-dot.png' %>",
+      scaledSize: new google.maps.Size(45, 45)
+    };
+    const map = new google.maps.Map(document.getElementById('detailMap'), {
+      center: position,
+      zoom: 18, // Zoom más cercano para ver detalles
+      minZoom: 6,    
+      maxZoom: 20,
+      restriction: {
+        latLngBounds: SPAIN_BOUNDS,
+        strictBounds: true
+      },
+      mapTypeId: 'hybrid', // Modo híbrido (satélite + etiquetas)
+      tilt: 45, // Inclinación 3D
+      heading: 0, // Rotación de la vista
+      streetViewControl: false,
+      mapTypeControlOptions: {
+        mapTypeIds: ['hybrid', 'satellite', 'roadmap']
+      }
+    });
+
+    // Activar edificios 3D
+    map.setTilt(45);
+    map.setOptions({styles: []}); // Eliminar estilos personalizados
+
+    new google.maps.Marker({
+      position: position,
+      map: map,
+      title: "<%= post.petName %>",
+      icon: markerIcon,
+      animation: google.maps.Animation.DROP
+    });
+
+    map.addListener('bounds_changed', () => {
+      if (!SPAIN_BOUNDS.contains(map.getCenter())) {
+        map.panTo(SPAIN_BOUNDS.getCenter());
+      }
+    });
+  }
+
+  // Activar Modal con Imagen Completa
+  document.querySelectorAll('.carousel-item img').forEach(img => {
+    img.addEventListener('click', () => {
+      document.getElementById('fullSizeImage').src = img.src;
+      new bootstrap.Modal(document.getElementById('imageModal')).show();
+    });
+  });
+</script>
+
+<script 
+  src="https://maps.googleapis.com/maps/api/js?key=<%= GOOGLE_MAPS_API_KEY %>&callback=initDetailMap&language=es&region=ES" 
+  async 
+  defer>
+</script>
+
+<%- include('../partials/footer') %>

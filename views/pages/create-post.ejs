@@ -1,0 +1,321 @@
+<%- include('../partials/head') %>
+<%- include('../partials/header', { user: user }) %>
+
+<main class="container my-4" style="padding-bottom: 30vh;">
+  <div class="row justify-content-center">
+    <div class="col-lg-8">
+      <div class="card shadow-sm border-0">
+        <div class="card-body p-4 p-md-5">
+          <h2 class="card-title text-center mb-4">Crear Nuevo Post</h2>
+          
+          <form action="/posts" method="POST" enctype="multipart/form-data" class="needs-validation" novalidate>
+            <!-- nombre de la mascota -->
+            <div class="mb-4">
+              <label for="petName" class="form-label">Nombre de la mascota</label>
+              <input 
+                type="text" 
+                class="form-control" 
+                id="petName"
+                name="petName" 
+                required
+              >
+              <div class="invalid-feedback">
+                Por favor ingresa el nombre de la mascota
+              </div>
+            </div>
+
+            <!-- tipo de mascota -->
+            <div class="mb-4">
+              <label for="petType" class="form-label">Tipo de mascota</label>
+              <select class="form-select" id="petType" name="petType" required>
+                <option value="" selected disabled>Selecciona un tipo</option>
+                <option value="perro">Perro</option>
+                <option value="gato">Gato</option>
+                <option value="hamster">Hamster</option>
+                <option value="pájaro">Pájaro</option>
+                <option value="otro">Otro</option>
+              </select>
+              <div class="invalid-feedback">
+                Por favor selecciona un tipo de mascota
+              </div>
+            </div>
+
+            <!-- estado -->
+            <div class="mb-4">
+              <label class="form-label">Estado</label>
+              <div class="btn-group w-100" role="group">
+                <input type="radio" class="btn-check" name="status" id="perdido" value="perdido" checked>
+                <label class="btn btn-outline-danger" for="perdido">
+                  <i class="bi"></i> Perdido
+                </label>
+
+                <input type="radio" class="btn-check" name="status" id="encontrado" value="encontrado">
+                <label class="btn btn-outline-success" for="encontrado">
+                  <i class="bi"></i> Encontrado
+                </label>
+              </div>
+            </div>
+
+            <!-- descripcion -->
+            <div class="mb-4">
+              <label for="description" class="form-label">Descripción</label>
+              <textarea 
+                class="form-control" 
+                id="description"
+                name="description" 
+                rows="4" 
+                required
+              ></textarea>
+              <div class="invalid-feedback">
+                Por favor ingresa una descripción
+              </div>
+              <small class="text-muted">Describe características distintivas, comportamiento, etc.</small>
+            </div>
+
+            <!-- subida de imagenes -->
+            <div class="mb-4">
+              <label class="form-label">Imágenes</label>
+              <div class="border rounded-3 p-3 bg-light">
+                <input 
+                  type="file" 
+                  class="form-control" 
+                  name="images" 
+                  multiple 
+                  accept="image/jpeg, image/png, image/webp"
+                  required
+                  onchange="previewImages(this)"
+                  data-max-files="5"
+                >
+                <small class="text-muted d-block mt-2">Mínimo 1 imagen, máximo 5. Formatos permitidos: JPG, PNG, WEBP</small>
+                <div id="image-preview" class="mt-3 row g-2"></div>
+              </div>
+              <div class="invalid-feedback d-block">
+                Debes subir al menos una imagen
+              </div>
+            </div>
+
+            <!-- fecha de perdida -->
+            <div class="mb-4">
+              <label for="lostDate" class="form-label">Fecha de pérdida</label>
+              <input 
+                type="date" 
+                class="form-control" 
+                id="lostDate"
+                name="lostDate" 
+                required
+                max="<%= new Date().toISOString().split('T')[0] %>"
+              >
+              <div class="invalid-feedback">
+                Por favor selecciona una fecha válida
+              </div>
+              <small class="text-muted">Última vez que se vio a la mascota</small>
+            </div>
+
+            <!-- recompensa -->
+            <div class="mb-4">
+              <label for="reward" class="form-label">Recompensa (opcional)</label>
+              <div class="input-group">
+                <span class="input-group-text">€</span>
+                <input 
+                  type="number" 
+                  class="form-control" 
+                  id="reward"
+                  name="reward" 
+                  min="0"
+                  step="10"
+                  placeholder="0.00"
+                >
+              </div>
+              <small class="text-muted">Puedes ofrecer una recompensa por su hallazgo</small>
+            </div>
+
+            <!-- mapa de ubicacion  -->
+            <div class="mb-4 map-container">
+              <label class="form-label">Ubicación aproximada</label>
+              <div class="position-relative" style="height: 300px;">
+                <div id="miniMap" class="h-100 w-100 rounded-3 border"></div>
+              </div>
+              <input type="hidden" id="latitude" name="latitude" required>
+              <input type="hidden" id="longitude" name="longitude" required>
+              <div class="invalid-feedback d-block">
+                Debes seleccionar una ubicación en el mapa
+              </div>
+              <small class="text-muted">Haz clic en el mapa para marcar donde se perdió la mascota</small>
+            </div>
+
+            <!-- boton de publicar -->
+            <div class="d-grid gap-2 mt-4">
+              <button type="submit" class="btn btn-primary btn-lg py-3">
+                <i class="bi bi-send-fill me-2"></i> Publicar Reporte
+              </button>
+            </div>
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>
+</main>
+
+<!-- script para las imagenes -->
+<script>
+  let selectedFiles = [];
+
+  function previewImages(input) {
+    const preview = document.getElementById('image-preview');
+    const maxFiles = 5;
+    const newFiles = Array.from(input.files);
+    const allFiles = [...selectedFiles, ...newFiles].slice(0, maxFiles);
+
+    if (allFiles.length > maxFiles) {
+      alert(`Máximo ${maxFiles} imágenes permitidas`);
+      input.value = '';
+      return;
+    }
+
+    selectedFiles = allFiles;
+    preview.innerHTML = '';
+    
+    allFiles.forEach((file, index) => {
+      const reader = new FileReader();
+      const col = document.createElement('div');
+      col.className = 'col-6 col-md-4 col-lg-3 position-relative mb-3';
+      
+      const card = document.createElement('div');
+      card.className = 'card h-100 border-0 shadow-sm';
+      
+      const img = document.createElement('img');
+      img.className = 'card-img-top object-fit-cover';
+
+      
+      const cardBody = document.createElement('div');
+      cardBody.className = 'card-body p-2 text-center';
+      
+      const fileName = document.createElement('small');
+      fileName.className = 'text-muted text-truncate d-block';
+      fileName.textContent = file.name;
+      
+      const removeBtn = document.createElement('button');
+      removeBtn.className = 'btn btn-danger btn-sm position-absolute top-0 end-0 m-1 rounded-circle';
+      removeBtn.innerHTML = '<i class="bi bi-x"></i>';
+      removeBtn.onclick = (e) => {
+        e.preventDefault();
+        removeImage(index);
+      };
+
+      reader.onload = (e) => {
+        img.src = e.target.result;
+        card.appendChild(img);
+        cardBody.appendChild(fileName);
+        card.appendChild(cardBody);
+        card.appendChild(removeBtn);
+        col.appendChild(card);
+        preview.appendChild(col);
+      };
+      reader.readAsDataURL(file);
+    });
+
+    updateFileInput();
+  }
+
+  function removeImage(index) {
+    selectedFiles = selectedFiles.filter((_, i) => i !== index);
+    previewImages({ files: selectedFiles });
+  }
+
+  function updateFileInput() {
+    const dataTransfer = new DataTransfer();
+    selectedFiles.forEach(file => dataTransfer.items.add(file));
+    document.querySelector('input[name="images"]').files = dataTransfer.files;
+  }
+</script>
+
+<!-- mapa -->
+<script>
+  let map, marker;
+
+  function initMiniMap() {
+    const initialPosition = { lat: 40.416775, lng: -3.703790 };
+    const mapElement = document.getElementById('miniMap');
+    
+    mapElement.style.height = '100%';
+    mapElement.style.width = '100%';
+    
+    map = new google.maps.Map(mapElement, {
+      center: initialPosition,
+      zoom: 12,
+      gestureHandling: "cooperative",
+      streetViewControl: false,
+      fullscreenControl: false,
+      mapTypeControlOptions: {
+        style: google.maps.MapTypeControlStyle.DROPDOWN_MENU
+      }
+    });
+
+    // ajuste del mapa
+    google.maps.event.addListenerOnce(map, 'tilesloaded', function() {
+      const center = map.getCenter();
+      google.maps.event.trigger(map, 'resize');
+      map.setCenter(center);
+    });
+
+    map.addListener('click', (e) => {
+      updateMarkerPosition(e.latLng);
+      validateForm();
+    });
+
+    // validacion
+    validateForm();
+  }
+
+  function updateMarkerPosition(latLng) {
+    document.getElementById('latitude').value = latLng.lat();
+    document.getElementById('longitude').value = latLng.lng();
+    
+    if (!marker) {
+      marker = new google.maps.Marker({
+        position: latLng,
+        map: map,
+        draggable: true,
+        animation: google.maps.Animation.DROP,
+        icon: {
+          url: "https://maps.google.com/mapfiles/ms/icons/red-dot.png",
+          scaledSize: new google.maps.Size(40, 40)
+        }
+      });
+      
+      marker.addListener('dragend', (e) => {
+        updateMarkerPosition(e.latLng);
+      });
+    } else {
+      marker.setPosition(latLng);
+    }
+  }
+
+  function validateForm() {
+    const form = document.querySelector('.needs-validation');
+    const latInput = document.getElementById('latitude');
+    
+    if (latInput.value) {
+      latInput.setCustomValidity('');
+    } else {
+      latInput.setCustomValidity('Debes seleccionar una ubicación');
+    }
+  }
+
+  // redimension correcta del mapa
+  window.addEventListener('resize', function() {
+    if (map) {
+      const center = map.getCenter();
+      google.maps.event.trigger(map, 'resize');
+      map.setCenter(center);
+    }
+  });
+</script>
+
+<script 
+  src="https://maps.googleapis.com/maps/api/js?key=<%= GOOGLE_MAPS_API_KEY %>&callback=initMiniMap&libraries=geometry" 
+  async 
+  defer>
+</script>
+
+<%- include('../partials/footer') %>

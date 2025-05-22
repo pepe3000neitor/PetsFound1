@@ -1,0 +1,462 @@
+/*---------------------------------- header -------------------------------------------*/
+
+/* Pequeños ajustes opcionales */
+.navbar {
+  box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+}
+
+.nav-link {
+  transition: color 0.2s ease;
+}
+
+.nav-link:hover {
+  color: #fff !important;
+}
+
+.navbar-brand {
+  font-size: 1.25rem;
+}
+
+/*------------------------------------- footer ---------------------------------------------*/
+
+footer {
+  width: 100%;
+  background-color: #343a40;
+  color: white;
+  padding: 1rem 0;
+  text-align: center;
+}
+
+footer a {
+  transition: opacity 0.3s ease;
+}
+
+footer a:hover {
+  opacity: 0.8;
+  text-decoration: underline !important;
+}
+
+/*--------------------------------------------- home ---------------------------------------------------*/
+
+html, body {
+  height: 100%;
+  margin: 0;
+  padding: 0;
+  background-color: #f8f9fa;
+  overflow-x: hidden;
+  position: relative;
+  min-height: 100%;
+}
+
+body {
+  display: flex;
+  flex-direction: column;
+  margin-bottom: 60px;
+  background-color: #f8f9fa;
+}
+
+#map {
+  min-height: calc(100vh - 120px);
+}
+
+.alert-map {
+    background: rgba(255, 255, 255, 0.93) !important;
+    backdrop-filter: blur(3px);
+    border: none !important;
+    padding: 0.5rem 1rem !important;
+    font-size: 0.85rem;
+    border-radius: 2rem !important;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+    width: fit-content;
+    margin-top: 10px !important;
+  }
+  
+  .map-info-window {
+    max-width: 250px;
+    font-family: system-ui, -apple-system, sans-serif;
+  }
+  
+  .map-info-window img {
+    max-height: 150px;
+    object-fit: cover;
+  }
+
+
+/*--------------------------------------------------- login -----------------------------------------------*/ 
+
+/* Estilos personalizados para login */
+
+.card {
+  border-radius: 0.5rem;
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+  border-radius: 0.5rem;
+  overflow: hidden;
+}
+
+.btn-outline-primary:hover i {
+  color: white;
+}
+
+/* Eliminar margen blanco debajo del footer */
+
+.flex-grow-1 {
+  flex-grow: 1;
+}
+
+/* Estilos generales para formularios */
+.needs-validation .form-control:invalid {
+  border-color: #dc3545;
+}
+
+.was-validated .form-control:invalid ~ .invalid-feedback {
+  display: block;
+}
+
+.invalid-feedback {
+  display: none;
+  color: #dc3545;
+  font-size: 0.875em;
+}
+
+/* Efecto hover para botones */
+.btn-outline-primary:hover {
+  color: #fff;
+}
+
+  /* Estilos personalizados para login */
+  
+  .card {
+    border-radius: 0.5rem;
+  }
+  
+  .btn-outline-primary:hover i {
+    color: white;
+  }
+  
+  /* Eliminar margen blanco debajo del footer */
+  
+  .flex-grow-1 {
+    flex-grow: 1;
+  }
+
+/*---------------------------------------------------- posts ------------------------------------------*/
+  .card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 10px 20px rgba(0,0,0,0.1);
+  }
+  
+  .card-img-top-container {
+    position: relative;
+    height: 200px;
+    overflow: hidden;
+  }
+  
+  .card-img-top {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    transition: transform 0.3s ease;
+  }
+  
+  .card:hover .card-img-top {
+    transform: scale(1.05);
+  }
+  
+  .search-form {
+    max-width: 800px;
+  }
+  
+  main {
+    flex: 1;
+  }
+
+  /* Animaciones para las tarjetas */
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(10px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+
+.card {
+  animation: fadeIn 0.3s ease forwards;
+}
+
+/* Efecto para los badges de recompensa */
+.badge.bg-success {
+  box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+}
+
+/* Mejor contraste para texto en cards */
+.card-text {
+  color: #495057;
+}
+
+@media (max-width: 768px) {
+  .search-form .form-select {
+    max-width: 120px;
+    font-size: 0.9rem;
+  }
+  
+  .search-form .form-control {
+    font-size: 0.9rem;
+  }
+
+  .card-img-top-container {
+    height: 150px;
+  }
+
+}
+
+/* Mantener alineación de elementos */
+.search-form .input-group {
+  flex-wrap: nowrap;
+}
+  
+  .card-img-top-container {
+    height: 150px;
+  }
+
+
+@media (max-width: 576px) {
+  .pagination .page-item:not(.active):not(:first-child):not(:last-child) {
+    display: none;
+  }
+  
+  .pagination .page-item.active {
+    order: 2;
+  }
+  
+  .pagination .page-item:first-child {
+    order: 1;
+  }
+  
+  .pagination .page-item:last-child {
+    order: 3;
+  }
+}
+
+/*--------------------------------------------------- profile --------------------------------------------------*/
+
+  /* Estilos personalizados para el perfil */
+  .avatar-initials {
+    text-transform: uppercase;
+  }
+  
+  .card {
+    border-radius: 0.5rem;
+    overflow: hidden;
+    transition: transform 0.2s ease;
+  }
+  
+  .card:hover {
+    transform: translateY(-3px);
+  }
+  
+  .list-group-item {
+    padding: 0.75rem 1.25rem;
+  }
+  
+  .btn-group .btn {
+    padding: 0.25rem 0.5rem;
+  }
+  
+  /* Eliminar margen blanco debajo del footer */
+  
+  .flex-grow-1 {
+    flex-grow: 1;
+  }
+
+  /* Paginación compacta */
+.pagination .page-link {
+  padding: 0.375rem 0.75rem;
+  font-size: 0.9rem;
+}
+
+@media (max-width: 576px) {
+  .pagination .page-item:not(.active):not(:first-child):not(:last-child) {
+    display: none;
+  }
+}
+  /*---------------------------------------------------------- details -----------------------------------------------------------*/ 
+
+/* Post Details - Mejoras específicas */
+.comment-list {
+  max-height: 400px;
+  overflow-y: auto;
+  padding-right: 10px;
+  scrollbar-width: thin;
+  scrollbar-color: #dee2e6 transparent;
+}
+
+.comment-list::-webkit-scrollbar {
+  width: 6px;
+}
+
+.comment-list::-webkit-scrollbar-thumb {
+  background-color: #dee2e6;
+  border-radius: 3px;
+}
+
+.carousel-control-prev-icon,
+.carousel-control-next-icon {
+  background-size: 0.75rem;
+  width: 30px;
+  height: 30px;
+}
+
+#detailMap {
+  border: 1px solid #dee2e6;
+  transition: all 0.3s ease;
+}
+
+.object-fit-contain {
+  object-fit: contain;
+  padding: 15px;
+  background: #f8f9fa;
+  min-height: 300px;
+}
+
+.modal-image {
+  max-height: 90vh;
+  width: auto;
+  cursor: zoom-out;
+  border-radius: 5px;
+  box-shadow: 0 0 15px rgba(0,0,0,0.2);
+}
+
+@media (max-width: 768px) {
+  .object-fit-contain {
+    min-height: 200px;
+    padding: 10px;
+  }
+  
+  .comment-list {
+    max-height: 300px;
+  }
+  
+  #detailMap {
+    height: 150px;
+  }
+  
+  .carousel-control-prev,
+  .carousel-control-next {
+    width: 25px;
+    height: 25px;
+  }
+}
+
+.text-muted.pre-line {
+  white-space: pre-line;
+  line-height: 1.6;
+}
+
+.badge.bg-success {
+  box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+}
+
+  /*---------------------------------------------------------- create --------------------------------------------------------------*/
+
+  
+  /* Estilos personalizados */
+  .object-fit-cover {
+    object-fit: cover;
+  }
+  
+  #miniMap {
+    border: 1px solid #dee2e6 !important;
+  }
+  
+  .invalid-feedback.d-block {
+    display: none;
+  }
+  
+  .was-validated .invalid-feedback.d-block {
+    display: block;
+  }
+  
+  /* Estilos para el mapa */
+  .map-container {
+    margin-bottom: 2rem;
+  }
+  
+  .flex-grow-1 {
+    flex-grow: 1;
+  }
+  
+  /* Ajustes para pantallas pequeñas */
+  @media (max-width: 768px) {
+    .map-container {
+      height: 250px;
+    }
+    
+    .card-body {
+      padding: 1.5rem;
+    }
+  }
+
+  /*------------------------------------------------------------------------------- profile edit ----------------------------------------------------*/
+
+  /* En styles.css */
+.avatar-upload {
+  position: relative;
+  max-width: 200px;
+  margin: 0 auto;
+}
+
+.avatar-upload label {
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.avatar-upload label:hover {
+  transform: translateY(-2px);
+}
+
+.avatar-preview img {
+  transition: all 0.3s ease;
+  border: 3px solid #dee2e6;
+}
+
+.avatar-preview img.uploaded {
+  border-color: #0d6efd;
+}
+
+/*--------------------------------------------------------- avatar -------------------------------------------------------*/
+
+/* Avatar styles */
+.navbar .nav-link img.rounded-circle {
+  transition: transform 0.2s ease;
+}
+
+.navbar .nav-link:hover img.rounded-circle {
+  transform: scale(1.1);
+}
+
+/* InfoWindow styles */
+.map-info-window {
+  min-width: 250px;
+  max-width: 300px;
+}
+
+.map-info-window img {
+  max-height: 150px;
+  object-fit: cover;
+  width: 100%;
+  border-radius: 0.5rem;
+}
+
+/* Post creator section */
+.creator-badge {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  padding: 0.5rem;
+  background-color: #f8f9fa;
+  border-radius: 2rem;
+}
+.description-text {
+  word-wrap: break-word;
+  overflow-wrap: break-word;
+  white-space: pre-wrap;
+  max-width: 100%;
+}
