@@ -4,7 +4,7 @@
 <div class="container my-4" style="margin-bottom: 100px; padding-top: 50px;">
   <div class="card border-0 shadow-lg">
     <div class="row g-0">
-      <!-- Sección de Imágenes -->
+      <!--seccion de imagenes-->
       <div class="col-lg-5">
         <div class="position-relative">
           <div id="postCarousel" class="carousel slide" style="max-height: 400px;">
@@ -18,6 +18,7 @@
                 </div>
               <% }); %>
             </div>
+            <!--controles de carrusel-->
             <button class="carousel-control-prev" type="button" data-bs-target="#postCarousel" data-bs-slide="prev">
               <span class="carousel-control-prev-icon bg-dark rounded-circle p-2" aria-hidden="true"></span>
               <span class="visually-hidden">Previous</span>
@@ -27,6 +28,7 @@
               <span class="visually-hidden">Next</span>
             </button>
           </div>
+          <!--muestra de recompensa si hay-->
           <div class="position-absolute top-0 end-0 m-2">
             <% if (post.reward > 0) { %>
               <span class="badge bg-success fs-6">
@@ -37,10 +39,10 @@
         </div>
       </div>
 
-      <!-- Sección de Detalles -->
+      <!--detalles del post-->
       <div class="col-lg-7">
         <div class="card-body p-4">
-          <!-- Header -->
+          <!--header-->
           <div class="d-flex justify-content-between align-items-start mb-3">
             <div>
               <h1 class="h2 mb-1"><%= post.petName %></h1>
@@ -57,7 +59,8 @@
                 </small>
               </div>
             </div>
-            <div class="d-flex align-items-center gap-2"> <!-- Cambio aquí -->
+            <!--informacion del dueño-->
+            <div class="d-flex align-items-center gap-2">
               <a href="/posts/user/<%= post.owner._id %>" class="text-decoration-none d-flex align-items-center gap-2">
                 <% if (post.owner.avatar) { %>
                   <img src="<%= post.owner.avatar %>" 
@@ -69,12 +72,12 @@
                     <%= post.owner.username.charAt(0).toUpperCase() %>
                   </div>
                 <% } %>
-                <span class="fw-small" style="font-size: 20px;"><%= post.owner.username %></span> <!-- Nombre añadido -->
+                <span class="fw-small" style="font-size: 20px;"><%= post.owner.username %></span>
               </a>
             </div>
           </div>
 
-          <!-- Descripción -->
+          <!--descripcion-->
           <div class="mb-4">
             <div class="border-bottom pb-2 mb-3">
               <h5 class="mb-0"><i class="bi bi-info-circle"></i> Descripción</h5>
@@ -82,7 +85,7 @@
             <p class="text-muted mb-0" style="white-space: pre-line;"><%= post.description %></p>
           </div>
 
-          <!-- Mapa -->
+          <!--mapa-->
           <div class="mb-4">
             <div class="border-bottom pb-2 mb-3">
               <h5 class="mb-0"><i class="bi bi-geo-alt"></i> Última ubicación</h5>
@@ -90,13 +93,13 @@
             <div id="detailMap" style="height: 200px; border-radius: 8px;"></div>
           </div>
 
-          <!-- Comentarios -->
+          <!--comentarios-->
           <div class="border-top pt-4">
             <div class="d-flex justify-content-between align-items-center mb-3">
               <h5 class="mb-0"><i class="bi bi-chat-text"></i> Comentarios (<%= post.comments.length %>)</h5>
               <small class="text-muted">Ordenados por recientes</small>
             </div>
-
+            <!--solo los usuarios logeados pueden mandar comentarios-->
             <% if (user) { %>
               <form action="/posts/<%= post._id %>/comments" method="POST" class="mb-4">
                 <div class="input-group">
@@ -115,7 +118,7 @@
                 <a href="/auth/login" class="alert-link">Inicia sesión</a> para comentar
               </div>
             <% } %>
-
+            <!--lista de comentarios-->
             <div class="comment-list">
               <% post.comments.forEach(comment => { %>
                 <div class="d-flex gap-3 mb-3">
@@ -154,7 +157,7 @@
   </div>
 </div>
 
-<!-- Modal para Imagen Completa -->
+<!--modal para ver imagen completa-->
 <div class="modal fade" id="imageModal" tabindex="-1">
   <div class="modal-dialog modal-fullscreen">
     <div class="modal-content bg-dark">
@@ -172,7 +175,7 @@
 
 <!-- Scripts para Mapa y Modal -->
 <script>
-  // Inicialización del Mapa
+  //inicializa el mapa 
   function initDetailMap() {
     const SPAIN_BOUNDS = new google.maps.LatLngBounds(
       new google.maps.LatLng(27.6, -18.3), 
@@ -225,7 +228,7 @@
     });
   }
 
-  // Activar Modal con Imagen Completa
+  //activar el modal al hacer click en la imagen
   document.querySelectorAll('.carousel-item img').forEach(img => {
     img.addEventListener('click', () => {
       document.getElementById('fullSizeImage').src = img.src;
@@ -234,6 +237,7 @@
   });
 </script>
 
+<!--carga el script de Google Maps con la API Key -->
 <script 
   src="https://maps.googleapis.com/maps/api/js?key=<%= GOOGLE_MAPS_API_KEY %>&callback=initDetailMap&language=es&region=ES" 
   async 

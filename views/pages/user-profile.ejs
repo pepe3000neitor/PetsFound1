@@ -3,19 +3,21 @@
 
 <main class="container my-5">
   <div class="row g-4">
-    <!-- Información del usuario -->
+    <!--información del usuario -->
     <div class="col-lg-4">
       <div class="card shadow-sm border-0 h-100">
         <div class="card-header bg-primary text-white py-3">
           <h4 class="mb-0"><i class="bi bi-person-badge me-2"></i>Perfil de <%= profileUser.username %></h4>
         </div>
         <div class="card-body">
+          <!--avatar y nombre de usuario -->
           <div class="text-center mb-4">
             <% if (profileUser.avatar) { %>
               <img src="<%= profileUser.avatar %>" 
                    class="rounded-circle shadow" 
                    style="width: 150px; height: 150px; object-fit: cover;">
             <% } else { %>
+              <!--avatar por defecto -->
               <div class="avatar-initials bg-primary text-white rounded-circle d-flex align-items-center justify-content-center" 
                    style="width: 150px; height: 150px; font-size: 3rem;">
                 <%= profileUser.username.charAt(0).toUpperCase() %>
@@ -24,6 +26,7 @@
             <h5 class="mb-1 mt-3"><%= profileUser.username %></h5>
           </div>
 
+          <!--detalles del usuario -->
           <ul class="list-group list-group-flush">
             <% if (profileUser.phone) { %>
               <li class="list-group-item d-flex justify-content-between align-items-center">
@@ -32,6 +35,7 @@
               </li>
             <% } %>
 
+            <!--descripccion del usuario -->
             <% if (profileUser.description) { %>
               <li class="list-group-item">
                 <h6 class="text-muted mb-2">
@@ -41,6 +45,7 @@
               </li>
             <% } %>
 
+            <!--fecha de registro formateada-->
             <li class="list-group-item d-flex justify-content-between align-items-center">
               <span><i class="bi bi-calendar-check me-2"></i>Registrado</span>
               <span class="badge bg-secondary">
@@ -53,6 +58,7 @@
               </span>
             </li>
             
+            <!--total de publicaciones -->
             <li class="list-group-item d-flex justify-content-between align-items-center">
               <span><i class="bi bi-postcard-heart me-2"></i>Publicaciones</span>
               <span class="badge bg-primary"><%= totalPosts %></span>
@@ -62,7 +68,7 @@
       </div>
     </div>
 
-    <!-- Publicaciones -->
+    <!--seccion de publicaciones de usuario-->
     <div class="col-lg-8">
       <div class="card shadow-sm border-0 h-100">
         <div class="card-header bg-info text-white py-3">
@@ -70,10 +76,12 @@
         </div>
         <div class="card-body">
           <% if (profileUser.posts && profileUser.posts.length > 0) { %>
+            <!--sección de publicaciones -->
             <div class="row row-cols-1 row-cols-md-2 g-4">
               <% profileUser.posts.forEach(post => { %>
                 <div class="col">
                   <div class="card h-100 border-0 shadow-sm">
+                    <!--imagen de la publicación -->
                     <% if (post.images && post.images.length > 0) { %>
                       <div class="position-relative">
                         <img src="<%= post.images[0] %>" 
@@ -83,14 +91,17 @@
                       </div>
                     <% } %>
                     
+                    <!--contenido de la publicación -->
                     <div class="card-body d-flex flex-column">
                       <div class="d-flex justify-content-between align-items-start mb-2">
                         <h5 class="card-title mb-0"><%= post.petName %></h5>
                         <span class="badge bg-primary">
+                          <!--tipo de mascota-->
                           <%= post.petType.charAt(0).toUpperCase() + post.petType.slice(1) %>
                         </span>
                       </div>
                       
+                      <!--descripcion truncada-->
                       <p class="card-text text-muted small mb-3">
                         <% if (post.description) { %>
                           <%= post.description.substring(0, 80) %>
@@ -100,6 +111,7 @@
                         <% } %>
                       </p>
                       
+                      <!--boton de detalles-->
                       <div class="mt-auto d-flex justify-content-between align-items-center">
                         <a href="/posts/<%= post._id %>" class="btn btn-sm btn-outline-primary">
                           <i class="bi bi-eye"></i> Ver detalles
@@ -111,7 +123,7 @@
               <% }); %>
             </div>
 
-            <!-- Paginación -->
+            <!--paginación -->
             <% if (totalPages > 1) { %>
               <nav class="mt-5">
                 <ul class="pagination justify-content-center">
@@ -122,6 +134,7 @@
                     </a>
                   </li>
                   
+                  <!--numeros de paginas-->
                   <% for (let i = 1; i <= totalPages; i++) { %>
                     <li class="page-item <%= currentPage === i ? 'active' : '' %>">
                       <a class="page-link" 
@@ -130,7 +143,7 @@
                       </a>
                     </li>
                   <% } %>
-                  
+                  <!--boton siguiente -->
                   <li class="page-item <%= currentPage === totalPages ? 'disabled' : '' %>">
                     <a class="page-link" 
                        href="/posts/user/<%= profileUser._id %>?page=<%= currentPage + 1 %>">
@@ -141,6 +154,7 @@
               </nav>
             <% } %>
 
+          <!--estado vacio-->
           <% } else { %>
             <div class="text-center py-5">
               <i class="bi bi-inbox text-muted" style="font-size: 3rem;"></i>

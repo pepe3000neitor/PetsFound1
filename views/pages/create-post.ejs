@@ -8,6 +8,7 @@
         <div class="card-body p-4 p-md-5">
           <h2 class="card-title text-center mb-4">Crear Nuevo Post</h2>
           
+          <!--formulario para crear post-->
           <form action="/posts" method="POST" enctype="multipart/form-data" class="needs-validation" novalidate>
             <!-- nombre de la mascota -->
             <div class="mb-4">
@@ -182,12 +183,12 @@
 
     updateFileInput();
   }
-
+  //eliminar imagen
   function removeImage(index) {
     selectedFiles = selectedFiles.filter((_, i) => i !== index);
     previewImages({ files: selectedFiles });
   }
-
+  //actualizar el input de archivos
   function updateFileInput() {
     const dataTransfer = new DataTransfer();
     selectedFiles.forEach(file => dataTransfer.items.add(file));
@@ -223,7 +224,7 @@
       google.maps.event.trigger(map, 'resize');
       map.setCenter(center);
     });
-
+    //permite seleccionar la ubicacion
     map.addListener('click', (e) => {
       updateMarkerPosition(e.latLng);
       validateForm();
@@ -232,7 +233,7 @@
     // validacion
     validateForm();
   }
-
+  //actualiza la posicion del marcador
   function updateMarkerPosition(latLng) {
     document.getElementById('latitude').value = latLng.lat();
     document.getElementById('longitude').value = latLng.lng();
@@ -256,7 +257,7 @@
       marker.setPosition(latLng);
     }
   }
-
+  //validacion del formulario
   function validateForm() {
     const form = document.querySelector('.needs-validation');
     const latInput = document.getElementById('latitude');

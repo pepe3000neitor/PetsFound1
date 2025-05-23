@@ -7,6 +7,7 @@ const Post = require('../models/Post');
 const User = require('../models/User');
 const mongoose = require('mongoose');
 
+//configuración de multer para manejar la subida de imágenes
 const upload = multer({
   dest: 'uploads/',
   limits: {
@@ -15,7 +16,7 @@ const upload = multer({
   }
 });
 
-// Crear post
+//ruta para mostrar el formulario de creación de post
 router.get('/create', isAuthenticated, (req, res) => {
   res.render('pages/create-post', { 
     user: req.session.user,
@@ -23,42 +24,37 @@ router.get('/create', isAuthenticated, (req, res) => {
   });
 });
 
+//procesa la creación de un nuevo post
 router.post('/', isAuthenticated, upload.array('images'), postController.createPost);
 
-// Ruta para mostrar la lista de posts con filtros y paginación
+//listado principal de posts con paginación y filtros
 router.get('/', async (req, res) => {
   try {
-    // Extrae los parámetros de búsqueda, tipo, estado y página de la URL
     const { search, type, status, page = 1 } = req.query;
-    const limit = 12; // Número de posts por página
-    const skip = (page - 1) * limit; // Cantidad de posts a saltar según la página
+    const limit = 12; 
+    const skip = (page - 1) * limit; 
 
     let query = {};
     
-    // Construye condiciones de búsqueda según los filtros recibidos
     const conditions = [];
-    if (search) conditions.push({ petName: { $regex: new RegExp(search, 'i') } }); // Filtra por nombre de mascota (insensible a mayúsculas)
-    if (type) conditions.push({ petType: type }); // Filtra por tipo de mascota
-    if (status) conditions.push({ status: status }); // Filtra por estado
+    if (search) conditions.push({ petName: { $regex: new RegExp(search, 'i') } }); 
+    if (type) conditions.push({ petType: type }); 
+    if (status) conditions.push({ status: status });
 
-    // Si hay condiciones, las agrega al query principal usando $and
     if (conditions.length > 0) {
       query.$and = conditions;
     }
 
-    // Cuenta el total de posts que cumplen con el filtro
     const totalPosts = await Post.countDocuments(query);
     
-    // Busca los posts aplicando paginación y poblando el campo 'owner'
     const posts = await Post.find(query)
       .skip(skip)
       .limit(limit)
       .populate('owner')
-      .lean(); // Convierte los documentos a objetos planos
+      .lean(); 
 
-    // Renderiza la vista de posts, pasando los datos necesarios para la paginación y los filtros
     res.render('pages/posts', {
-      posts: posts || [], // Si no hay posts, envía un array vacío
+      posts: posts || [], 
       user: req.session.user,
       searchQuery: search,
       selectedType: type,
@@ -68,7 +64,6 @@ router.get('/', async (req, res) => {
     });
 
   } catch (error) {
-    // Si ocurre un error, lo muestra en consola y renderiza una página de error
     console.error('Error en GET /posts:', error);
     res.status(500).render('pages/error', {
       message: 'Error al cargar los posts',
@@ -78,10 +73,10 @@ router.get('/', async (req, res) => {
   }
 });
 
-// Perfil público 
+//perfil publico de usuario
 router.get('/user/:userId', postController.getUserProfile);
 
-// Detalles de un post específico
+// detalle individual de un post
 router.get('/:id', async (req, res) => {
   try {
     if (!mongoose.Types.ObjectId.isValid(req.params.id)) {
@@ -118,10 +113,10 @@ router.get('/:id', async (req, res) => {
   }
 });
 
-// Eliminar post
+//eliminar post
 router.delete('/:id', isAuthenticated, postController.deletePost);
 
-// Comentarios
+//sistemas de comentarios
 router.post('/:id/comments', isAuthenticated, postController.addComment);
 
 module.exports = router;

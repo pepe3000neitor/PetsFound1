@@ -7,18 +7,16 @@ const fs = require('fs');
 const path = require('path');
 const mongoose = require('mongoose');
 
-// Perfil del usuario
+//muestra el perfil del usuario con paginacion
 router.get('/', isAuthenticated, async (req, res) => {
   try {
     const page = parseInt(req.query.page) || 1;
     const limit = 6;
     const skip = (page - 1) * limit;
 
-    // Obtener el total de posts primero
     const userWithoutPosts = await User.findById(req.session.user._id);
     const totalPosts = userWithoutPosts.posts.length;
 
-    // Obtener usuario con posts paginados
     const user = await User.findById(req.session.user._id)
       .populate({
         path: 'posts',
@@ -34,7 +32,7 @@ router.get('/', isAuthenticated, async (req, res) => {
       user: user.toObject(),
       currentPage: page,
       totalPages: Math.ceil(totalPosts / limit),
-      totalPosts: totalPosts // Pasar el total a la vista
+      totalPosts: totalPosts 
     });
 
   } catch (error) {
@@ -46,7 +44,7 @@ router.get('/', isAuthenticated, async (req, res) => {
   }
 });
 
-// Editar perfil
+//muestra el formulario de edicion de perfil
 router.get('/edit', isAuthenticated, async (req, res) => {
   try {
     const user = await User.findById(req.session.user._id);
@@ -62,7 +60,7 @@ router.get('/edit', isAuthenticated, async (req, res) => {
   }
 });
 
-// Actualizar perfil
+//procesa la actualizacion del perfil
 router.post('/edit', 
   isAuthenticated,
   upload.single('avatar'),
@@ -71,7 +69,6 @@ router.post('/edit',
       const userId = req.session.user._id;
       const { username, email, phone, description, existingAvatar } = req.body;
 
-      // Validación de datos
       if (!mongoose.Types.ObjectId.isValid(userId)) {
         return res.status(400).render('pages/404', {
           message: 'ID de usuario inválido',
@@ -102,7 +99,6 @@ router.post('/edit',
         avatar: req.file ? '/uploads/avatars/' + req.file.filename : existingAvatar
       };
 
-      // Eliminar avatar antiguo si existe
       if (req.file && existingAvatar && !existingAvatar.includes('default-avatar')) {
         const oldAvatarPath = path.join(__dirname, '../public', existingAvatar);
         fs.unlink(oldAvatarPath, (err) => {

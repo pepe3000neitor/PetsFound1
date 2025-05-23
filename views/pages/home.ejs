@@ -2,6 +2,7 @@
 <%- include('../partials/header', { user: user }) %>
 
 <main class="flex-grow-1">
+  <!-- mapa de Google Maps-->
   <div class="container-fluid g-0 h-100">
     <div id="map" class="h-100 w-100"></div>
   </div>
@@ -9,13 +10,13 @@
 
 <script>
   function initMap() {
-    // definicio de los limites geograficos en España
+    //definicio de los limites geograficos en España
     const SPAIN_BOUNDS = new google.maps.LatLngBounds(
       new google.maps.LatLng(27.6, -18.3),
       new google.maps.LatLng(43.8, 4.5) 
     );
 
-    // configuracion del mapa
+    //configuracion del mapa
     const map = new google.maps.Map(document.getElementById('map'), {
       center: { lat: 40.416775, lng: -3.703790 }, //primera aparicion en Madrid
       zoom: 6,
@@ -27,13 +28,13 @@
       },
       streetViewControl: false,
       fullscreenControl: false, 
-      mapTypeControlOptions: { // opciones en el control de los tipos de mapa
+      mapTypeControlOptions: { //opciones en el control de los tipos de mapa
         mapTypeIds: ['roadmap', 'hybrid', 'satellite', 'terrain'], 
         style: google.maps.MapTypeControlStyle.DROPDOWN_MENU 
       }
     });
 
-    // 4. Cargar marcadores de publicaciones
+    //cargar marcadores de publicaciones
     const posts = JSON.parse('<%- JSON.stringify(posts) %>');
     
     posts.forEach(post => {
@@ -42,6 +43,7 @@
         post.location.coordinates[0]
       );
 
+      //tipos de iconos para los marcadores
       const markerIcon = {
         url: post.status === 'encontrado' ? 
           'https://maps.google.com/mapfiles/ms/icons/green-dot.png' :
@@ -49,7 +51,7 @@
         scaledSize: new google.maps.Size(32, 32)
       };
 
-      // 5. Verificar si el marcador está dentro de los límites
+      //crear el marcador en el mapa
       const marker = new google.maps.Marker({
         position: markerPosition,
         map: map,
@@ -57,7 +59,7 @@
         icon: markerIcon // Usa el nuevo icono
       });
 
-        // 6. Ventana de información
+        //ventana de información
         const infoWindow = new google.maps.InfoWindow({
           content: `
             <div class="map-info-window">
@@ -80,14 +82,13 @@
             </div>
           `
         });
-
         marker.addListener('click', () => {
           infoWindow.open(map, marker);
         });
       });
 
 
-    // 7. Forzar los límites después de cargar
+    //mantener el mapa  dentro de los limites de España
     map.addListener('bounds_changed', () => {
       if (!SPAIN_BOUNDS.contains(map.getCenter())) {
         map.panTo(SPAIN_BOUNDS.getCenter());

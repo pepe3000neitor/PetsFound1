@@ -9,6 +9,7 @@
           <div class="card-body p-4">
             <h2 class="card-title text-center mb-4">Iniciar Sesión</h2>
 
+            <!--muestra un mensaje de error general si lo hay-->
             <% if (typeof error !== 'undefined' && error) { %>
               <div class="alert alert-danger alert-dismissible fade show">
                 <%= error %>
@@ -16,53 +17,47 @@
               </div>
             <% } %>
 
+            <!--formulario-->
             <form action="/auth/login" method="POST" class="needs-validation" novalidate>
+              <!--campo de correo o usuario-->
               <div class="mb-3">
                 <label for="identifier" class="form-label">Correo o Usuario</label>
-                <input 
-                  type="text" 
-                  class="form-control <%= (typeof errors !== 'undefined' && errors.identifier) ? 'is-invalid' : '' %>" 
-                  id="identifier"
-                  name="identifier" 
-                  value="<%= identifier || '' %>"
-                >
-                <% if (typeof errors !== 'undefined' && errors.identifier) { %>
+                <input type="text"
+                  class="form-control <%= (typeof errors !== 'undefined' && errors.identifier) ? 'is-invalid' : '' %>" id="identifier"
+                  name="identifier" value="<%= identifier || '' %>">
+                <% if (typeof errors !=='undefined' && errors.identifier) { %>
                   <div class="invalid-feedback">
                     <%= errors.identifier %>
                   </div>
-                <% } %>
+                  <% } %>
               </div>
 
+              <!--campo de contraseña-->
               <div class="mb-4">
                 <label for="password" class="form-label">Contraseña</label>
                 <div class="input-group">
-                  <input 
-                    type="password" 
-                    class="form-control <%= (typeof errors !== 'undefined' && errors.password) ? 'is-invalid' : '' %>" 
-                    id="password"
-                    name="password"
-                  >
-                  <button 
-                    type="button" 
-                    class="btn btn-outline-primary"
-                    onclick="togglePassword('password')"
-                  >
+                  <input type="password"
+                    class="form-control <%= (typeof errors !== 'undefined' && errors.password) ? 'is-invalid' : '' %>" id="password"
+                    name="password">
+                  <button type="button" class="btn btn-outline-primary" onclick="togglePassword('password')">
                     <i class="bi bi-eye-fill" id="eye-icon"></i>
                   </button>
                 </div>
-                <% if (typeof errors !== 'undefined' && errors.password) { %>
+                <% if (typeof errors !=='undefined' && errors.password) { %>
                   <div class="invalid-feedback">
                     <%= errors.password %>
                   </div>
-                <% } %>
+                  <% } %>
               </div>
 
+              <!--boton para iniciar sesión-->
               <div class="d-grid mb-3">
                 <button type="submit" class="btn btn-primary btn-lg">
                   <i class="bi bi-box-arrow-in-right me-2"></i>Ingresar
                 </button>
               </div>
 
+              <!--boton de redireccion a register-->
               <div class="text-center">
                 <p class="mb-0">¿No tienes cuenta? <a href="/auth/register">Regístrate</a></p>
               </div>
@@ -75,6 +70,7 @@
 </main>
 
 <script>
+  //scrip para mostrar/ocultar contraseña
   document.addEventListener('DOMContentLoaded', () => {
     const inputs = document.querySelectorAll('.form-control.is-invalid');
     inputs.forEach(input => input.classList.remove('is-invalid'));

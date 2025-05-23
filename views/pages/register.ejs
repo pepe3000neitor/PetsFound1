@@ -7,6 +7,7 @@
       <div class="col-md-6">
         <h2 class="mb-4 text-center">Registro</h2>
 
+        <!--muestra un mensaje de error general si lo hay-->
         <% if (typeof error !== 'undefined' && error) { %>
           <div class="alert alert-danger alert-dismissible fade show">
             <%= error %>
@@ -14,77 +15,52 @@
           </div>
         <% } %>
 
+        <!--formulario-->
         <form action="/auth/register" method="POST" id="registerForm" novalidate>
-          <!-- Nombre de usuario -->
+          <!--nombre de usuario -->
           <div class="mb-3">
             <label class="form-label">Nombre de usuario</label>
-            <input 
-              type="text" 
-              class="form-control <%= errors?.username ? 'is-invalid' : '' %>" 
-              name="username" 
-              value="<%= formData.username || '' %>" 
-              required
-            >
+            <input type="text" class="form-control <%= errors?.username ? 'is-invalid' : '' %>" name="username"
+              value="<%= formData.username || '' %>" required>
             <% if (errors?.username) { %>
               <div class="invalid-feedback">
                 <%= errors.username %>
               </div>
-            <% } %>
+              <% } %>
           </div>
 
-          <!-- Email -->
+          <!--email -->
           <div class="mb-3">
             <label class="form-label">Correo electrónico</label>
-            <input 
-              type="email" 
-              class="form-control <%= errors?.email ? 'is-invalid' : '' %>" 
-              name="email" 
-              value="<%= formData.email || '' %>" 
-              required
-            >
+            <input type="email" class="form-control <%= errors?.email ? 'is-invalid' : '' %>" name="email"
+              value="<%= formData.email || '' %>" required>
             <% if (errors?.email) { %>
               <div class="invalid-feedback">
                 <%= errors.email %>
               </div>
-            <% } %>
-            <div id="emailError" class="invalid-feedback d-none">Este correo ya está registrado</div>
+              <% } %>
+                <div id="emailError" class="invalid-feedback d-none">Este correo ya está registrado</div>
           </div>
 
-          <!-- Fecha de nacimiento -->
+          <!--fecha de nacimiento -->
           <div class="mb-3">
             <label class="form-label">Fecha de nacimiento</label>
-            <input 
-              type="date" 
-              class="form-control <%= errors?.birthDate ? 'is-invalid' : '' %>" 
-              name="birthDate" 
-              value="<%= formData.birthDate || '' %>" 
-              max="<%= new Date().toISOString().split('T')[0] %>" 
-              required
-            >
+            <input type="date" class="form-control <%= errors?.birthDate ? 'is-invalid' : '' %>" name="birthDate"
+              value="<%= formData.birthDate || '' %>" max="<%= new Date().toISOString().split('T')[0] %>" required>
             <% if (errors?.birthDate) { %>
               <div class="invalid-feedback">
                 <%= errors.birthDate %>
               </div>
-            <% } %>
+              <% } %>
           </div>
 
-          <!-- Contraseña -->
+          <!--contraseña -->
           <div class="mb-3">
             <label class="form-label">Contraseña</label>
             <div class="input-group">
-              <input 
-                type="password" 
-                class="form-control <%= errors?.password ? 'is-invalid' : '' %>" 
-                id="password" 
-                name="password" 
-                required
-                pattern="^(?=.*[A-Z])(?=.*\d).{8,}$"
-              >
-              <button 
-                type="button" 
-                class="btn btn-outline-secondary"
-                onclick="togglePassword('password')"
-              >
+              <input type="password" class="form-control <%= errors?.password ? 'is-invalid' : '' %>" id="password"
+                name="password" required pattern="^(?=.*[A-Z])(?=.*\d).{8,}$">
+              <button type="button" class="btn btn-outline-secondary" onclick="togglePassword('password')">
                 <i class="bi bi-eye-fill" id="eye-password"></i>
               </button>
             </div>
@@ -96,22 +72,13 @@
             </div>
           </div>
 
-          <!-- Confirmar Contraseña -->
+          <!--confirmar Contraseña -->
           <div class="mb-3">
             <label class="form-label">Confirmar Contraseña</label>
             <div class="input-group">
-              <input 
-                type="password" 
-                class="form-control <%= errors?.confirmPassword ? 'is-invalid' : '' %>" 
-                id="confirmPassword" 
-                name="confirmPassword" 
-                required
-              >
-              <button 
-                type="button" 
-                class="btn btn-outline-secondary"
-                onclick="togglePassword('confirmPassword')"
-              >
+              <input type="password" class="form-control <%= errors?.confirmPassword ? 'is-invalid' : '' %>" id="confirmPassword"
+                name="confirmPassword" required>
+              <button type="button" class="btn btn-outline-secondary" onclick="togglePassword('confirmPassword')">
                 <i class="bi bi-eye-fill" id="eye-confirm"></i>
               </button>
             </div>
@@ -120,11 +87,13 @@
             </div>
           </div>
 
+          <!--boton de envio -->
           <div class="d-grid mt-4">
             <button type="submit" class="btn btn-primary">Registrarse</button>
           </div>
         </form>
 
+        <!--enlace para iniciar sesion -->
         <div class="text-center mt-3">
           <p class="mb-0">¿Ya tienes cuenta? <a href="/auth/login">Inicia sesión</a></p>
         </div>
@@ -134,7 +103,7 @@
 </main>
 
 <script>
-  // Función para mostrar/ocultar contraseña
+  //función para mostrar/ocultar contraseña
   function togglePassword(fieldId) {
     const field = document.getElementById(fieldId);
     const eyeIcon = document.getElementById(`eye-${fieldId}`);
@@ -143,13 +112,13 @@
     eyeIcon.classList.toggle('bi-eye-slash-fill');
   }
 
-  // Validación en tiempo real
+  //validación en tiempo real
   document.addEventListener('DOMContentLoaded', () => {
     const form = document.getElementById('registerForm');
     const password = document.getElementById('password');
     const confirmPassword = document.getElementById('confirmPassword');
     
-    // Validar formato de contraseña
+    //validar formato de contraseña
     password.addEventListener('input', () => {
       const regex = /^(?=.*[A-Z])(?=.*\d).{8,}$/;
       const isValid = regex.test(password.value);
@@ -157,18 +126,18 @@
       document.getElementById('passwordError').classList.toggle('d-none', isValid);
     });
 
-    // Validar coincidencia de contraseñas
+    //validar coincidencia de contraseñas
     confirmPassword.addEventListener('input', () => {
       const match = password.value === confirmPassword.value;
       confirmPassword.classList.toggle('is-invalid', !match);
       document.getElementById('confirmError').classList.toggle('d-none', match);
     });
 
-    // Validar antes de enviar
+    //validar antes de enviar
     form.addEventListener('submit', (e) => {
       let valid = true;
       
-      // Validar contraseña
+      //validar contraseña
       const passwordValid = /^(?=.*[A-Z])(?=.*\d).{8,}$/.test(password.value);
       if (!passwordValid) {
         password.classList.add('is-invalid');
@@ -176,7 +145,7 @@
         valid = false;
       }
 
-      // Validar coincidencia
+      //validar coincidencia
       if (password.value !== confirmPassword.value) {
         confirmPassword.classList.add('is-invalid');
         document.getElementById('confirmError').classList.remove('d-none');

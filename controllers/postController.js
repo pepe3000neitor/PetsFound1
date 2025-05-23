@@ -1,9 +1,11 @@
+
 const Post = require('../models/Post');
 const User = require('../models/User');
 const fs = require('fs');
 const mongoose = require('mongoose');
 const cloudinary = require('cloudinary').v2;
 
+//controlador para mostrar todos los posts
 exports.getAllPosts = async (req, res) => {
   try {
     const posts = await Post.find().populate('owner');
@@ -19,12 +21,12 @@ exports.getAllPosts = async (req, res) => {
   }
 };
 
+// controlador para crear posts
 exports.createPost = async (req, res) => {
   const session = await mongoose.startSession();
   try {
     session.startTransaction();
     
-    // Validaciones iniciales
     const errors = [];
     const formData = req.body;
 
@@ -46,8 +48,7 @@ exports.createPost = async (req, res) => {
         GOOGLE_MAPS_API_KEY: process.env.GOOGLE_MAPS_API_KEY
       });
     }
-
-    // Procesar imágenes
+    //sube las imagenes a cloudinary y guarda las urls
     const uploadPromises = req.files.map(async (file) => {
       try {
         const result = await cloudinary.uploader.upload(file.path, {
@@ -63,7 +64,7 @@ exports.createPost = async (req, res) => {
 
     const images = await Promise.all(uploadPromises);
 
-    // Crear nuevo post
+    //crea el posts con los datos del formulario
     const newPost = new Post({
       ...formData,
       lostDate,
@@ -79,10 +80,9 @@ exports.createPost = async (req, res) => {
       }
     });
 
-    // Validación de Mongoose
     await newPost.validate();
 
-    // Guardar en base de datos
+    //guarda el post en la base de datos y lo asocia al usuario
     const savedPost = await newPost.save({ session });
     await User.findByIdAndUpdate(
       req.session.user._id,
@@ -97,7 +97,6 @@ exports.createPost = async (req, res) => {
     await session.abortTransaction();
     console.error('Error crítico:', error.stack);
 
-    // Manejo de archivos temporales
     if (req.files) {
       req.files.forEach(file => {
         fs.unlink(file.path, err => {
@@ -105,8 +104,6 @@ exports.createPost = async (req, res) => {
         });
       });
     }
-
-    // Manejo de errores de validación
     const errors = [];
     if (error instanceof mongoose.Error.ValidationError) {
       for (const field in error.errors) {
@@ -127,11 +124,11 @@ exports.createPost = async (req, res) => {
   }
 };
 
-
+// controlador para eliminar posts
 exports.deletePost = async (req, res) => {
   try {
     const post = await Post.findById(req.params.id);
-    
+    // verifica que el usuario sea el dueño del post
     if (post.owner.toString() !== req.session.user._id.toString()) {
       return res.status(403).render('pages/404', {
         message: 'No tienes permiso para esta acción',
@@ -161,6 +158,7 @@ exports.deletePost = async (req, res) => {
   }
 };
 
+//controlador para añadir comentarios a los posts
 exports.addComment = async (req, res) => {
   try {
     const post = await Post.findById(req.params.id);
@@ -180,7 +178,7 @@ exports.addComment = async (req, res) => {
         user: req.session.user
       });
     }
-
+    //agregar el comentario
     post.comments.push({
       user: req.session.user._id,
       text: text.trim()
@@ -198,6 +196,7 @@ exports.addComment = async (req, res) => {
   }
 };
 
+//controaldor para mostrar el perfiler de un usuario
 exports.getUserProfile = async (req, res) => {
   try {
     const page = parseInt(req.query.page) || 1;
@@ -210,8 +209,7 @@ exports.getUserProfile = async (req, res) => {
         user: req.session.user
       });
     }
-
-    // Obtener usuario con posts paginados
+    // busca el usuario y sus posts
     const user = await User.findById(req.params.userId)
       .populate({
         path: 'posts',
@@ -223,8 +221,7 @@ exports.getUserProfile = async (req, res) => {
         select: 'petName petType images lostDate description',
         populate: { path: 'owner', select: 'username avatar' }
       });
-
-    // Obtener total de posts
+      //obitene el total de posts 
     const userWithTotal = await User.findById(req.params.userId);
     const totalPosts = userWithTotal.posts.length;
 
@@ -234,7 +231,7 @@ exports.getUserProfile = async (req, res) => {
         user: req.session.user
       });
     }
-
+    //renderiza el perfil del usuario con los posts paginados
     res.render('pages/user-profile', {
       profileUser: user.toObject(),
       currentUser: req.session.user,
@@ -251,14 +248,4 @@ exports.getUserProfile = async (req, res) => {
       user: req.session.user
     });
   }
-};
-
-const getErrorMessage = (error) => {
-  if (error instanceof mongoose.Error.ValidationError) {
-    return Object.values(error.errors).map(e => e.message).join(', ');
-  }
-  if (error.message.includes('Cloudinary')) {
-    return 'Error al procesar las imágenes. Intenta con formatos JPG/PNG';
-  }
-  return 'Error interno del servidor. Por favor intenta nuevamente';
 };

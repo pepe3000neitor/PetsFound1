@@ -1,19 +1,23 @@
+<!-- barra de navegacion principal -->
 <nav class="navbar navbar-expand-md navbar-dark bg-dark py-2">
   <div class="container">
+    <!-- logo -->
     <a class="navbar-brand fw-bold" href="/">PetsFound</a>
-    
+    <!-- boton para menu movil -->
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
       <span class="navbar-toggler-icon"></span>
     </button>
-    
+    <!-- contenedor colapsable del navbar -->
     <div class="collapse navbar-collapse" id="navbarNav">
       <ul class="navbar-nav ms-auto align-items-center">
+        <!-- enlace de post permanente -->
         <li class="nav-item">
           <a class="nav-link" href="/posts">Posts</a>
         </li>
         
-        <% if (user) { %>
-          <!-- usuario logeado -->
+        <% if (user) { %> 
+          <!-- seccion para usuario logeado -->
+          <!-- avatar y nombre de usuario -->
           <li class="nav-item">
             <a class="nav-link d-flex align-items-center gap-2" href="/profile">
               <% if (user.avatar) { %>
@@ -29,6 +33,7 @@
               <span><%= user.username %></span>
             </a>
           </li>
+          <!-- boton para cerrar sesion -->
           <li class="nav-item">
             <a class="nav-link" href="/auth/logout">Cerrar Sesión</a>
           </li>

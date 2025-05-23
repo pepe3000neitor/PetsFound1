@@ -3,12 +3,11 @@ const router = express.Router();
 const { check, validationResult } = require('express-validator');
 const User = require('../models/User');
 const { isGuest } = require('../middlewares/auth');
-const bcrypt = require('bcryptjs');
 
-// Validación de contraseña segura
+//validación de contraseña segura
 const passwordValidator = value => /^(?=.*\d)(?=.*[A-Z]).{8,}$/.test(value);
 
-// Página de registro
+//muestra el formulario de registro para los usuarios no autenticados
 router.get('/register', isGuest, (req, res) => {
   res.render('pages/register', { 
     errors: [],
@@ -18,7 +17,7 @@ router.get('/register', isGuest, (req, res) => {
   });
 });
 
-// Página de login
+//muestra el formulario de inicio de sesión para los usuarios no autenticados
 router.get('/login', isGuest, (req, res) => {
   res.render('pages/login', { 
     error: null,
@@ -27,7 +26,7 @@ router.get('/login', isGuest, (req, res) => {
   });
 });
 
-// Procesar registro
+//procesar el registro de los usuarios
 router.post('/register', [
   check('username').notEmpty().trim().withMessage('Nombre de usuario obligatorio'),
   check('email').isEmail().normalizeEmail().withMessage('Correo no válido'),
@@ -80,7 +79,7 @@ router.post('/register', [
   }
 });
 
-// Procesar login
+//procesa el formulario de inicio de sesión de los usuarios
 router.post('/login', [
   check('identifier').notEmpty().withMessage('Correo o usuario requerido'),
   check('password').notEmpty().withMessage('Contraseña requerida')
@@ -124,6 +123,7 @@ router.post('/login', [
   }
 });
 
+//procesa el formulario de inicio de sesión
 router.get('/login', isGuest, (req, res) => {
   res.render('pages/login', {
     error: null,
@@ -133,7 +133,7 @@ router.get('/login', isGuest, (req, res) => {
   });
 });
 
-// routes/authRoutes.js
+//cierre de sesion de usuario
 router.get('/logout', (req, res) => {
   const user = req.session.user;
   req.session.destroy(err => {
