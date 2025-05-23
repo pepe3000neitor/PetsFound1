@@ -1,15 +1,15 @@
-# Dependencias
+#dependecias
 node_modules/
 
-# Variables de entorno
+#variables de entorno
 .env
 
-# Archivos de IDE
+#archivos ide
 .vscode/
 .idea/
 
-# Logs
+#logs
 *.log
 
-# Archivos del sistema
+#archivos del sistema
 .DS_Store

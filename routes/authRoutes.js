@@ -6,7 +6,7 @@ const { isGuest } = require('../middlewares/auth');
 const bcrypt = require('bcryptjs');
 
 // Validación de contraseña segura
-const passwordValidator = value => /^(?=.*\d)(?=.*[a-z])(?=.*[A-Z]).{8,}$/.test(value);
+const passwordValidator = value => /^(?=.*\d)(?=.*[A-Z]).{8,}$/.test(value);
 
 // Página de registro
 router.get('/register', isGuest, (req, res) => {
@@ -39,7 +39,10 @@ router.post('/register', [
   
   if (!errors.isEmpty()) {
     return res.render('pages/register', {
-      errors: errors.array(),
+      errors: errors.array().reduce((acc, err) => {
+        acc[err.param] = err.msg;
+        return acc;
+      }, {}),
       formData: req.body,
       error: null,
       user: req.session.user 
@@ -56,9 +59,9 @@ router.post('/register', [
         ? 'Correo ya registrado' 
         : 'Usuario ya existe';
       return res.render('pages/register', {
-        errors: [],
+        errors: { email: errorMsg },
         formData: req.body,
-        error: errorMsg,
+        error: null,
         user: req.session.user
       });
     }
@@ -69,7 +72,7 @@ router.post('/register', [
     res.redirect('/');
 
   } catch (err) {
-    res.status(500).render('pages/error', { 
+    res.status(500).render('pages/404', { 
       message: 'Error del servidor',
       error: process.env.NODE_ENV === 'development' ? err : {},
       user: req.session.user 
@@ -113,7 +116,7 @@ router.post('/login', [
     res.redirect('/');
 
   } catch (err) {
-    res.status(500).render('pages/error', { 
+    res.status(500).render('pages/404', { 
       message: 'Error del servidor',
       error: process.env.NODE_ENV === 'development' ? err : {},
       user: req.session.user 

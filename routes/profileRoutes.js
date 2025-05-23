@@ -39,7 +39,7 @@ router.get('/', isAuthenticated, async (req, res) => {
 
   } catch (error) {
     console.error('Error cargando perfil:', error);
-    res.status(500).render('pages/error', {
+    res.status(500).render('pages/404', {
       message: 'Error al cargar el perfil',
       user: req.session.user
     });
@@ -55,7 +55,7 @@ router.get('/edit', isAuthenticated, async (req, res) => {
       error: '' 
     });
   } catch (error) {
-    res.status(500).render('pages/error', {
+    res.status(500).render('pages/404', {
       message: 'Error al cargar el perfil',
       user: req.session.user
     });
@@ -73,7 +73,7 @@ router.post('/edit',
 
       // Validación de datos
       if (!mongoose.Types.ObjectId.isValid(userId)) {
-        return res.status(400).render('pages/error', {
+        return res.status(400).render('pages/404', {
           message: 'ID de usuario inválido',
           user: req.session.user
         });

@@ -7,42 +7,116 @@
       <div class="col-md-6">
         <h2 class="mb-4 text-center">Registro</h2>
 
-        <form action="/auth/register" method="POST">
+        <% if (typeof error !== 'undefined' && error) { %>
+          <div class="alert alert-danger alert-dismissible fade show">
+            <%= error %>
+            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+          </div>
+        <% } %>
+
+        <form action="/auth/register" method="POST" id="registerForm" novalidate>
+          <!-- Nombre de usuario -->
           <div class="mb-3">
             <label class="form-label">Nombre de usuario</label>
-            <input type="text" class="form-control" name="username" value="<%= formData.username || '' %>" required>
+            <input 
+              type="text" 
+              class="form-control <%= errors?.username ? 'is-invalid' : '' %>" 
+              name="username" 
+              value="<%= formData.username || '' %>" 
+              required
+            >
+            <% if (errors?.username) { %>
+              <div class="invalid-feedback">
+                <%= errors.username %>
+              </div>
+            <% } %>
           </div>
 
+          <!-- Email -->
           <div class="mb-3">
             <label class="form-label">Correo electrónico</label>
-            <input type="email" class="form-control" name="email" value="<%= formData.email || '' %>" required>
+            <input 
+              type="email" 
+              class="form-control <%= errors?.email ? 'is-invalid' : '' %>" 
+              name="email" 
+              value="<%= formData.email || '' %>" 
+              required
+            >
+            <% if (errors?.email) { %>
+              <div class="invalid-feedback">
+                <%= errors.email %>
+              </div>
+            <% } %>
+            <div id="emailError" class="invalid-feedback d-none">Este correo ya está registrado</div>
           </div>
 
+          <!-- Fecha de nacimiento -->
           <div class="mb-3">
             <label class="form-label">Fecha de nacimiento</label>
-            <input type="date" class="form-control" name="birthDate" value="<%= formData.birthDate || '' %>" required>
+            <input 
+              type="date" 
+              class="form-control <%= errors?.birthDate ? 'is-invalid' : '' %>" 
+              name="birthDate" 
+              value="<%= formData.birthDate || '' %>" 
+              max="<%= new Date().toISOString().split('T')[0] %>" 
+              required
+            >
+            <% if (errors?.birthDate) { %>
+              <div class="invalid-feedback">
+                <%= errors.birthDate %>
+              </div>
+            <% } %>
           </div>
 
+          <!-- Contraseña -->
           <div class="mb-3">
             <label class="form-label">Contraseña</label>
             <div class="input-group">
-              <input type="password" class="form-control" id="password" name="password" required>
-              <button type="button" class="btn btn-outline-secondary" onclick="togglePassword('password')">
-                👁️
+              <input 
+                type="password" 
+                class="form-control <%= errors?.password ? 'is-invalid' : '' %>" 
+                id="password" 
+                name="password" 
+                required
+                pattern="^(?=.*[A-Z])(?=.*\d).{8,}$"
+              >
+              <button 
+                type="button" 
+                class="btn btn-outline-secondary"
+                onclick="togglePassword('password')"
+              >
+                <i class="bi bi-eye-fill" id="eye-password"></i>
               </button>
             </div>
             <small class="form-text text-muted">
               Mínimo 8 caracteres, 1 mayúscula y 1 número
             </small>
+            <div id="passwordError" class="invalid-feedback d-none">
+              La contraseña debe tener al menos 8 caracteres, una mayúscula y un número
+            </div>
           </div>
 
+          <!-- Confirmar Contraseña -->
           <div class="mb-3">
             <label class="form-label">Confirmar Contraseña</label>
             <div class="input-group">
-              <input type="password" class="form-control" id="confirmPassword" name="confirmPassword" required>
-              <button type="button" class="btn btn-outline-secondary" onclick="togglePassword('confirmPassword')">
-                👁️
+              <input 
+                type="password" 
+                class="form-control <%= errors?.confirmPassword ? 'is-invalid' : '' %>" 
+                id="confirmPassword" 
+                name="confirmPassword" 
+                required
+              >
+              <button 
+                type="button" 
+                class="btn btn-outline-secondary"
+                onclick="togglePassword('confirmPassword')"
+              >
+                <i class="bi bi-eye-fill" id="eye-confirm"></i>
               </button>
+            </div>
+            <div id="confirmError" class="invalid-feedback d-none">
+              Las contraseñas no coinciden
             </div>
           </div>
 
@@ -60,10 +134,61 @@
 </main>
 
 <script>
+  // Función para mostrar/ocultar contraseña
   function togglePassword(fieldId) {
     const field = document.getElementById(fieldId);
+    const eyeIcon = document.getElementById(`eye-${fieldId}`);
     field.type = field.type === 'password' ? 'text' : 'password';
+    eyeIcon.classList.toggle('bi-eye-fill');
+    eyeIcon.classList.toggle('bi-eye-slash-fill');
   }
+
+  // Validación en tiempo real
+  document.addEventListener('DOMContentLoaded', () => {
+    const form = document.getElementById('registerForm');
+    const password = document.getElementById('password');
+    const confirmPassword = document.getElementById('confirmPassword');
+    
+    // Validar formato de contraseña
+    password.addEventListener('input', () => {
+      const regex = /^(?=.*[A-Z])(?=.*\d).{8,}$/;
+      const isValid = regex.test(password.value);
+      password.classList.toggle('is-invalid', !isValid);
+      document.getElementById('passwordError').classList.toggle('d-none', isValid);
+    });
+
+    // Validar coincidencia de contraseñas
+    confirmPassword.addEventListener('input', () => {
+      const match = password.value === confirmPassword.value;
+      confirmPassword.classList.toggle('is-invalid', !match);
+      document.getElementById('confirmError').classList.toggle('d-none', match);
+    });
+
+    // Validar antes de enviar
+    form.addEventListener('submit', (e) => {
+      let valid = true;
+      
+      // Validar contraseña
+      const passwordValid = /^(?=.*[A-Z])(?=.*\d).{8,}$/.test(password.value);
+      if (!passwordValid) {
+        password.classList.add('is-invalid');
+        document.getElementById('passwordError').classList.remove('d-none');
+        valid = false;
+      }
+
+      // Validar coincidencia
+      if (password.value !== confirmPassword.value) {
+        confirmPassword.classList.add('is-invalid');
+        document.getElementById('confirmError').classList.remove('d-none');
+        valid = false;
+      }
+
+      if (!valid) {
+        e.preventDefault();
+        e.stopPropagation();
+      }
+    });
+  });
 </script>
 
 <%- include('../partials/footer') %>

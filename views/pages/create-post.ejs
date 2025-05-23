@@ -12,13 +12,7 @@
             <!-- nombre de la mascota -->
             <div class="mb-4">
               <label for="petName" class="form-label">Nombre de la mascota</label>
-              <input 
-                type="text" 
-                class="form-control" 
-                id="petName"
-                name="petName" 
-                required
-              >
+              <input type="text" class="form-control" id="petName" name="petName" required>
               <div class="invalid-feedback">
                 Por favor ingresa el nombre de la mascota
               </div>
@@ -59,13 +53,7 @@
             <!-- descripcion -->
             <div class="mb-4">
               <label for="description" class="form-label">Descripción</label>
-              <textarea 
-                class="form-control" 
-                id="description"
-                name="description" 
-                rows="4" 
-                required
-              ></textarea>
+              <textarea class="form-control" id="description" name="description" rows="4" required></textarea>
               <div class="invalid-feedback">
                 Por favor ingresa una descripción
               </div>
@@ -76,16 +64,8 @@
             <div class="mb-4">
               <label class="form-label">Imágenes</label>
               <div class="border rounded-3 p-3 bg-light">
-                <input 
-                  type="file" 
-                  class="form-control" 
-                  name="images" 
-                  multiple 
-                  accept="image/jpeg, image/png, image/webp"
-                  required
-                  onchange="previewImages(this)"
-                  data-max-files="5"
-                >
+                <input type="file" class="form-control" name="images" multiple accept="image/jpeg, image/png, image/webp" required
+                  onchange="previewImages(this)" data-max-files="5">
                 <small class="text-muted d-block mt-2">Mínimo 1 imagen, máximo 5. Formatos permitidos: JPG, PNG, WEBP</small>
                 <div id="image-preview" class="mt-3 row g-2"></div>
               </div>
@@ -97,14 +77,8 @@
             <!-- fecha de perdida -->
             <div class="mb-4">
               <label for="lostDate" class="form-label">Fecha de pérdida</label>
-              <input 
-                type="date" 
-                class="form-control" 
-                id="lostDate"
-                name="lostDate" 
-                required
-                max="<%= new Date().toISOString().split('T')[0] %>"
-              >
+              <input type="date" class="form-control" id="lostDate" name="lostDate" required
+                max="<%= new Date().toISOString().split('T')[0] %>">
               <div class="invalid-feedback">
                 Por favor selecciona una fecha válida
               </div>
@@ -116,15 +90,7 @@
               <label for="reward" class="form-label">Recompensa (opcional)</label>
               <div class="input-group">
                 <span class="input-group-text">€</span>
-                <input 
-                  type="number" 
-                  class="form-control" 
-                  id="reward"
-                  name="reward" 
-                  min="0"
-                  step="10"
-                  placeholder="0.00"
-                >
+                <input type="number" class="form-control" id="reward" name="reward" min="0" step="10" placeholder="0.00">
               </div>
               <small class="text-muted">Puedes ofrecer una recompensa por su hallazgo</small>
             </div>

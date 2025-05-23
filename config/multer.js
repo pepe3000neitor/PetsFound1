@@ -1,11 +1,14 @@
+// importes 
 const multer = require('multer');
 const path = require('path');
 
-// alamcenamiento
+//configura el almacenamiento de los archivos
 const storage = multer.diskStorage({
+  //ruta de destino de los archivos
   destination: function (req, file, cb) {
     cb(null, 'public/uploads/avatars/');
   },
+  //define el nombre con el que se guardara el archivo
   filename: function (req, file, cb) {
     const uniqueSuffix = Date.now() + '-' + Math.round(Math.random() * 1E9);
     const ext = path.extname(file.originalname);
@@ -13,8 +16,9 @@ const storage = multer.diskStorage({
   }
 });
 
-// filtro de los archivos
+//filtro para validar el tipo de archivo
 const fileFilter = (req, file, cb) => {
+  //acepta solo archivos de imagen
   if (file.mimetype.startsWith('image/')) {
     cb(null, true);
   } else {
@@ -28,7 +32,7 @@ const upload = multer({
   limits: { //limira el tamaño del archivo a 5mb
     fileSize: 5 * 1024 * 1024
   },
-  fileFilter: fileFilter
+  fileFilter: fileFilter //filtro para validar el tipo de archivo
 });
 
 module.exports = upload;

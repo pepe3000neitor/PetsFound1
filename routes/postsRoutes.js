@@ -85,7 +85,7 @@ router.get('/user/:userId', postController.getUserProfile);
 router.get('/:id', async (req, res) => {
   try {
     if (!mongoose.Types.ObjectId.isValid(req.params.id)) {
-      return res.status(400).render('pages/error', {
+      return res.status(400).render('pages/404', {
         message: 'ID de publicación inválido',
         user: req.session.user
       });
@@ -99,7 +99,7 @@ router.get('/:id', async (req, res) => {
       });
 
     if (!post) {
-      return res.status(404).render('pages/error', {
+      return res.status(404).render('pages/404', {
         message: 'Publicación no encontrada',
         user: req.session.user
       });
@@ -111,7 +111,7 @@ router.get('/:id', async (req, res) => {
       GOOGLE_MAPS_API_KEY: process.env.GOOGLE_MAPS_API_KEY
     });
   } catch (error) {
-    res.status(500).render('pages/error', {
+    res.status(500).render('pages/404', {
       message: 'Error al cargar el post',
       user: req.session.user
     });
