@@ -4,7 +4,6 @@ const multer = require('multer');
 const postController = require('../controllers/postController');
 const { isAuthenticated } = require('../middlewares/auth');
 const Post = require('../models/Post');
-const User = require('../models/User');
 const mongoose = require('mongoose');
 
 //configuración de multer para manejar la subida de imágenes
